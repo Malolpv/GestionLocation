@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\GraviteRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,9 +25,16 @@ class Gravite
     private $Libelle;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Dommage::class, inversedBy="LaGravite")
+     * @ORM\OneToMany(targetEntity=Dommage::class, mappedBy="LaGravite")
      */
     private $LesDommages;
+
+    public function __construct()
+    {
+        $this->LesDommages = new ArrayCollection();
+    }
+
+    
 
     public function getId(): ?int
     {
@@ -44,15 +53,36 @@ class Gravite
         return $this;
     }
 
-    public function getLesDommages(): ?Dommage
+    /**
+     * @return Collection|Dommage[]
+     */
+    public function getLesDommages(): Collection
     {
         return $this->LesDommages;
     }
 
-    public function setLesDommages(?Dommage $LesDommages): self
+    public function addLesDommage(Dommage $lesDommage): self
     {
-        $this->LesDommages = $LesDommages;
+        if (!$this->LesDommages->contains($lesDommage)) {
+            $this->LesDommages[] = $lesDommage;
+            $lesDommage->setLaGravite($this);
+        }
 
         return $this;
     }
+
+    public function removeLesDommage(Dommage $lesDommage): self
+    {
+        if ($this->LesDommages->removeElement($lesDommage)) {
+            // set the owning side to null (unless already changed)
+            if ($lesDommage->getLaGravite() === $this) {
+                $lesDommage->setLaGravite(null);
+            }
+        }
+
+        return $this;
+    }
+
+   
+
 }

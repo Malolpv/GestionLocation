@@ -30,13 +30,15 @@ class Dommage
     private $LeElement;
 
     /**
-     * @ORM\OneToMany(targetEntity=Gravite::class, mappedBy="LesDommages")
+     * @ORM\ManyToOne(targetEntity=Gravite::class, inversedBy="LesDommages")
      */
     private $LaGravite;
 
+    
+
     public function __construct()
     {
-        $this->LaGravite = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -68,33 +70,17 @@ class Dommage
         return $this;
     }
 
-    /**
-     * @return Collection|Gravite[]
-     */
-    public function getLaGravite(): Collection
+    public function getLaGravite(): ?Gravite
     {
         return $this->LaGravite;
     }
 
-    public function addLaGravite(Gravite $laGravite): self
+    public function setLaGravite(?Gravite $LaGravite): self
     {
-        if (!$this->LaGravite->contains($laGravite)) {
-            $this->LaGravite[] = $laGravite;
-            $laGravite->setLesDommages($this);
-        }
+        $this->LaGravite = $LaGravite;
 
         return $this;
     }
 
-    public function removeLaGravite(Gravite $laGravite): self
-    {
-        if ($this->LaGravite->removeElement($laGravite)) {
-            // set the owning side to null (unless already changed)
-            if ($laGravite->getLesDommages() === $this) {
-                $laGravite->setLesDommages(null);
-            }
-        }
 
-        return $this;
-    }
 }
